@@ -1,20 +1,24 @@
 import { useState } from 'react'
+import {useEffect} from 'react'
+import axios from 'axios'
 import PersonForm from './Form.js'
 import Persons from './Persons.js'
 import Filter from './Filter.js'
 
 
 const App = () => {
-  const [persons, setPersons] = useState([
-    { name: 'Arto Hellas', number: '000-001-0006', id: 1 },
-    { name: 'Ada Lovelace', number: '111-111-1116', id: 2 },
-    { name: 'Dan Abramov', number: '020-020-0202', id: 3 },
-    { name: 'Mary Poppendieck', number: '001-001-0011', id: 4 }
-  ])
+  const [persons, setPersons] = useState([])
   const [newName, setNewName] = useState('')
   const [newNumber, setNewNumber] = useState('')
   const [newFilter, setNewFilter] = useState('')
 
+  useEffect(() => {
+    axios
+     .get('http://localhost:3001/persons')
+     .then(response => {
+       setPersons(response.data)
+     })
+   }, [])
 
   const invalidNumber = () => {
     if (!newNumber.match(/^[0-9]{3}-[0-9]{3}-[0-9]{4}$/)) {
@@ -23,9 +27,11 @@ const App = () => {
   }
 
   const invalidName = () => {
-    let invalidMsg
-    persons.forEach(person => {
-      if (person.name === newName) {
+    let invalidMsg = !newName.match(/[a-z]/i) ? 
+                     'Name must have one alphabetical character' : undefined
+    
+     persons.forEach(person => {
+      if (person.name.toLowerCase() === newName.toLowerCase()) {
         invalidMsg = `${newName} has already been added to the phonebook.`
       }
     })
@@ -83,4 +89,5 @@ const App = () => {
 }
 
 export default App
+
 

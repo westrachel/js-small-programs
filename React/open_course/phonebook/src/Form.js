@@ -18,4 +18,3 @@ const PersonForm = ({addContactInfo, onNameChange, onNumberChange}) => {
 export default PersonForm
 
 
-
