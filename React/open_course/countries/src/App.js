@@ -1,5 +1,5 @@
 import { useState } from 'react'
-import {useEffect} from 'react'
+import { useEffect } from 'react'
 import axios from 'axios'
 import Filter from './Filter.js'
 import Countries from './Countries.js'
@@ -8,6 +8,7 @@ import Countries from './Countries.js'
 const App = () => {
   const [countries, setCountries] = useState([])
   const [selected, setSelected] = useState([])
+  const [switchToSingleView, setMoreDetailedView] = useState('')
 
   useEffect(() => {
     axios
@@ -18,6 +19,7 @@ const App = () => {
    }, [])
 
   const handleFilterChange = (event) => {
+    setMoreDetailedView('')
     const regex = new RegExp(event.target.value, "i")
     const matches = countries.filter(country => {
       return country.name.common.match(regex)
@@ -29,7 +31,10 @@ const App = () => {
     <div>
       <h1>Country Lookups:</h1>
       <Filter onFilterChange={handleFilterChange} />
-      <Countries props={selected} />
+      <Countries 
+        props={selected} 
+        switchView={setMoreDetailedView}
+        singleCountryView={switchToSingleView} />
     </div>
   )
 }

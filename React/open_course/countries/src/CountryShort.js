@@ -1,11 +1,14 @@
-const CountryShort = ({props}) => {
+const CountryShort = ({props, viewDetails}) => {
 
-  const changeView = (event) => event.preventDefault()
+  const changeView = (event) => {
+    event.preventDefault()
+    viewDetails(event.target.id)
+  }
 
   return (
     <div key={props.name.official}>
       {props.name.official}
-      <button onClick={changeView}>
+      <button id={props.name.official} onClick={changeView}>
         show
       </button>    
     </div>
