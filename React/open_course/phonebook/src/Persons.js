@@ -1,19 +1,23 @@
-const Person = ({props}) => {
-  const { id, name, number } = {...props}
+const Person = ({details, deletePerson}) => {
+  const { id, name, number } = {...details}
 
   return ( 
-    <div key={id}>
+    <div id={id} key={id}>
       {name} {number}
+      <button onClick={deletePerson}>Delete</button>
     </div>
   )
 }
 
-const Persons = ({allContacts}) => {
+const Persons = ({allContacts, deleteContact}) => {
 
   return (
     <>
     {allContacts.map(person =>
-      <Person props={person} />
+      <Person 
+        details={person} 
+        deletePerson={deleteContact} 
+      />
     )}
     </>
   )

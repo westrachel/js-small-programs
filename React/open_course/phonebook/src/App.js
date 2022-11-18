@@ -1,6 +1,6 @@
 import { useState } from 'react'
-import {useEffect} from 'react'
-import axios from 'axios'
+import { useEffect } from 'react'
+import personService from './services/persons.js'
 import PersonForm from './Form.js'
 import Persons from './Persons.js'
 import Filter from './Filter.js'
@@ -8,15 +8,17 @@ import Filter from './Filter.js'
 
 const App = () => {
   const [persons, setPersons] = useState([])
+  const [selectedPersons, setSelected] = useState([])
   const [newName, setNewName] = useState('')
   const [newNumber, setNewNumber] = useState('')
   const [newFilter, setNewFilter] = useState('')
 
   useEffect(() => {
-    axios
-     .get('http://localhost:3001/persons')
+    personService
+     .retrieveAll()
      .then(response => {
-       setPersons(response.data)
+       setPersons(response)
+       setSelected(response)
      })
    }, [])
 
@@ -57,8 +59,27 @@ const App = () => {
       alert(errorMsg)
     } else {
       const newPerson = { name: newName, number: newNumber }
-      setPersons(persons.concat(newPerson))
+      personService
+        .addPerson(newPerson)
+        .then(response => {
+          setPersons(persons.concat(response))
+          setNewName('')
+          setNewNumber('')
+        })
     }
+  }
+ 
+  const deleteContact = (event) => {
+    const contact = event.target.parentNode.textContent.replace('Delete', '')
+    const id = event.target.parentNode.id
+
+    window.confirm(`Are you sure you want to delete the contact info: ${contact}?`)
+    personService.deletePerson(id)
+
+    const matches = persons.filter(person => {
+      return person.id !== Number(id)
+    })
+    setSelected(matches)
   }
 
   const handleFilterChange = (event) => {
@@ -66,7 +87,7 @@ const App = () => {
     const matches = persons.filter(person => {
       return person.name.match(regex)
     })
-    setPersons(matches)
+    setSelected(matches)
   }
 
   const handleNameChange = (event) => setNewName(event.target.value)
@@ -83,7 +104,10 @@ const App = () => {
         onNumberChange={handleNumberChange} 
       />
       <h3>Numbers</h3>
-      <Persons allContacts={persons} />
+      <Persons 
+        allContacts={selectedPersons} 
+        deleteContact={deleteContact}
+      />
     </div>
   )
 }
