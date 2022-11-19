@@ -8,7 +8,7 @@ import Filter from './Filter.js'
 
 const App = () => {
   const [persons, setPersons] = useState([])
-  const [selectedPersons, setSelected] = useState([])
+  const [selected, setSelected] = useState([])
   const [newName, setNewName] = useState('')
   const [newNumber, setNewNumber] = useState('')
   const [newFilter, setNewFilter] = useState('')
@@ -16,9 +16,9 @@ const App = () => {
   useEffect(() => {
     personService
      .retrieveAll()
-     .then(response => {
-       setPersons(response)
-       setSelected(response)
+     .then(responseData => {
+       setPersons(responseData)
+       setSelected(responseData)
      })
    }, [])
 
@@ -28,16 +28,24 @@ const App = () => {
     }
   }
 
-  const invalidName = () => {
-    let invalidMsg = !newName.match(/[a-z]/i) ? 
-                     'Name must have one alphabetical character' : undefined
-    
-     persons.forEach(person => {
-      if (person.name.toLowerCase() === newName.toLowerCase()) {
-        invalidMsg = `${newName} has already been added to the phonebook.`
+  const existingContact = () => {
+    let existsFlag
+
+    persons.forEach(person => {
+      if (matchesExistingName(person.name)) {
+        existsFlag = true
       }
     })
-    return invalidMsg
+    return existsFlag
+  }
+
+  const matchesExistingName = (existingName) => {
+    return existingName.toLowerCase() === newName.toLowerCase()
+  }
+
+  const invalidName = () => {
+    return !newName.match(/[a-z]/i) ? 
+           'Name must have one alphabetical character' : undefined
   }
 
   const invalidInputs = () => {
@@ -51,22 +59,60 @@ const App = () => {
     return allMsgs
   }
 
-  const addContact = (event) => {
+  const proposedContact = () => {
+    return { name: newName, number: newNumber }
+  }
+
+  const addUpdateContact = (event) => {
     event.preventDefault()
     const errorMsg = invalidInputs()
+    const exists = existingContact()
 
     if (errorMsg) {
       alert(errorMsg)
+    } else if (exists) {
+      updateContact()
     } else {
-      const newPerson = { name: newName, number: newNumber }
-      personService
-        .addPerson(newPerson)
-        .then(response => {
-          setPersons(persons.concat(response))
-          setNewName('')
-          setNewNumber('')
-        })
+      addContact()
     }
+  }
+
+  const resetInputStates = () => {
+    setNewName('')
+    setNewNumber('')
+  }
+
+  const addContact = () => {
+    const newPerson = proposedContact()
+    personService
+      .addPerson(newPerson)
+      .then(response => {
+        resetInputStates()
+        updatePeopleStates(persons.concat(response))
+      })
+  }
+
+  const updateContact = () => {  
+    window.confirm(`Are you sure you want to update the phone number for: ${newName}?`)
+
+    const newPeople = [];
+    let id
+    persons.forEach(person => {
+      const copy = { ...person }
+      if (matchesExistingName(person.name)) {
+        copy.number = newNumber
+        id = person.id
+      }
+      newPeople.push(copy)
+    })
+
+    personService.updatePerson(id, proposedContact())
+    updatePeopleStates(newPeople)
+  }
+
+  const updatePeopleStates = (people) => {
+    setPersons(people)
+    setSelected(people)
   }
  
   const deleteContact = (event) => {
@@ -79,11 +125,12 @@ const App = () => {
     const matches = persons.filter(person => {
       return person.id !== Number(id)
     })
-    setSelected(matches)
+    updatePeopleStates(matches)
   }
 
   const handleFilterChange = (event) => {
     const regex = new RegExp(event.target.value, "i")
+
     const matches = persons.filter(person => {
       return person.name.match(regex)
     })
@@ -99,13 +146,15 @@ const App = () => {
       <Filter onFilterChange={handleFilterChange} />
       <h2>Add New Contact</h2>
       <PersonForm
-        addContactInfo={addContact}
+        nameValue={newName}
+        numberValue={newNumber}
+        addContactInfo={addUpdateContact}
         onNameChange={handleNameChange}
         onNumberChange={handleNumberChange} 
       />
       <h3>Numbers</h3>
-      <Persons 
-        allContacts={selectedPersons} 
+      <Persons
+        allContacts={selected} 
         deleteContact={deleteContact}
       />
     </div>

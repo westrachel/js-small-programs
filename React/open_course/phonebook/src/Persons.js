@@ -15,6 +15,7 @@ const Persons = ({allContacts, deleteContact}) => {
     <>
     {allContacts.map(person =>
       <Person 
+        key={person.name}
         details={person} 
         deletePerson={deleteContact} 
       />
