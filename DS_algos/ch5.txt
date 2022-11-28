@@ -1,0 +1,58 @@
+# Use Big O Notation to describe the efficiency of the following methods
+
+# 1.
+def double_then_sum(arr)
+  doubled_arr = []
+  
+  arr.each do |num|
+    doubled_arr << num *= 2
+  end
+
+  doubled_arr.each do |num|
+    sum += num
+  end
+
+  return sum
+end
+
+Time Complexity: O(N)
+Explanation:
+For an N element array, the method iterates over each element twice, so there’d be 2N steps. 
+This can be simplified to O(N) in terms to Big O Notation, because constants are immaterial.
+
+# 2.
+def multiple_cases(arr)
+  arr.each do |str|
+    puts str.upcase
+    puts str.downcase
+    puts str.capitalize
+  end
+end
+
+Time Complexity: O(N)
+Explanation:
+The method iterates over each element in the given array one time and on each iteration prints
+3 different function invocations’ return values. Therefore, for an N element array, the method
+takes 3N steps, which simplifies to O(N) time complexity
+
+# 3.
+def every_other(arr)
+  arr.each_with_index do |num, idx|
+    if idx.even?
+      arr.each do |other_num|
+        puts num + other_num
+      end
+    end
+  end
+end
+
+Time Complexity: O(N^2)
+Explanation:
+For an array with N elements, there are (5.0 / 2.0).round number of even indexes, which will be
+about half the indices. For an array that has an even number of elements, the number of even indices
+will be exactly half the size array and for an array that has an odd number of elements it will be
+slightly more than half the size of the array. The outer loop iterates over each of the N elements in
+the array and the inner loop is only executed if the index is even, but will trigger iterating over all
+the N elements again. In total, there will be about 1/2*(N^2) number of steps due to the nested loops.
+In terms of Big O notation, this would be expressed as O(N^2), because the 1/2 is a constant and would be
+dropped.
