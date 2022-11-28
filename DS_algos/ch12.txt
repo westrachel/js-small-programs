@@ -1,0 +1,57 @@
+# Reduce the number of recursive calls made in the following function
+def add_until_100(array)
+  return 0 if array.length == 0
+  if array[0] + add_until_100(array[1, array.length - 1]) > 100
+    return add_until_100(array[1, array.length - 1]) 
+  else
+    return array[0] + add_until_100(array[1, array.length - 1])
+  end
+end
+
+# refactored:
+def add_until_100(array)
+  return 0 if array.length == 0
+  remaining_sum = add_until_100(array[1, array.length - 1])
+  if array[0] + remaining_sum > 100
+    return remaining_sum
+  else
+    return array[0] + add_until_100(array[1, array.length - 1])
+  end
+end
+
+
+# Refactor the given function to incorporate memoization
+# golomb sequence: 1, 2, 2, 3, 3, 4, 4, 4, 5, ...
+def golomb(n)
+  return 1 if n == 1
+  return 1 + golomb(n - golomb(golomb(n - 1)))
+end
+
+# refactored:
+def golomb_num(n, golombs={})
+  if n == 1
+    return 1
+  elsif !golombs[n]
+    golombs[n] = 1 + golomb_num(n - golomb_num(golomb_num(n - 1, golombs), golombs), golombs)
+  end
+  
+  return golombs[n]
+end
+
+golomb_num(41) == golomb(41)   # true
+
+# Refactor the given function to use memoization
+def unique_paths(rows, columns)
+  return 1 if rows == 1 || columns == 1
+  return unique_paths(rows - 1, columns) + unique_paths(rows, columns - 1)
+end
+
+# refactored:
+def all_unique_paths(rows, columns, paths={})
+  return 1 if rows == 1 || columns == 1
+  if !paths[[rows, columns]]
+    paths[[rows, columns]] = unique_paths(rows - 1, columns, paths) + 
+      unique_paths(rows, columns - 1, paths)
+  end 
+  return paths[[rows, columns]]
+end

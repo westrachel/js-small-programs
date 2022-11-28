@@ -1,0 +1,26 @@
+# Write a function that reverses a string and uses a stack
+class Stack
+  def initialize(arr=[])
+    @stack = arr
+  end
+  
+  def delete
+    @stack.pop
+  end
+  
+  def add(value)
+    @stack.push(value)
+  end
+  
+end
+
+def reverse_str(str)
+  stack = Stack.new(str.chars)
+  reversed = ''
+  
+  str.length.times { |_| reversed << stack.delete }
+  return reversed
+end
+
+
+
