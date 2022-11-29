@@ -1,0 +1,147 @@
+// Write a function that returns an array of players that 
+//  play both sports; there are 2 given array arguments containing
+//  sports team data. Time complexity should be O(N + M)
+
+function multisportAthletes(sport1, sport2) {
+  let numSportsPlayed = {};
+  let multisportPlayers = [];
+  
+  sport1.forEach(athlete => {
+    numSportsPlayed[`${athlete.first_name} ${athlete.last_name}`] = 1;
+  });
+
+  sport2.forEach(athlete => {
+    if (onRoster(numSportsPlayed, athlete)) {
+      multisportPlayers.push(`${athlete.first_name} ${athlete.last_name}`);
+    }
+  });
+
+  return multisportPlayers;
+}
+
+function onRoster(roster, athlete) {
+  let name = `${athlete.first_name} ${athlete.last_name}`;
+  return Object.keys(roster).includes(name);
+}
+
+basketball_players = [
+  {first_name: "Jill", last_name: "Huang", team: "Gators"},
+  {first_name: "Janko", last_name: "Barton", team: "Sharks"},
+  {first_name: "Wanda", last_name: "Vakulskas", team: "Sharks"},
+  {first_name: "Jill", last_name: "Moloney", team: "Gators"},
+  {first_name: "Luuk", last_name: "Watkins", team: "Gators"}
+];
+football_players = [
+  {first_name: "Hanzla", last_name: "Radosti", team: "32ers"},
+  {first_name: "Tina", last_name: "Watkins", team: "Barleycorns"},
+  {first_name: "Alex", last_name: "Patel", team: "32ers"},
+  {first_name: "Jill", last_name: "Huang", team: "Barleycorns"},
+  {first_name: "Wanda", last_name: "Vakulskas", team: "Barleycorns"}
+];
+
+multisportAthletes(basketball_players, football_players);
+// returns: [ Jill Huang, Wanda Vakulskas]
+
+// Write a function that returns the number that's missing from an
+// array that contains incrementing integers. There's only one number
+// missing and the time complexity should be O(N)
+
+function missingNum(arr) {
+  let smallest = Math.min(...arr);
+  
+  while (arr.includes(smallest)) {
+    smallest += 1;
+  }
+  
+  return smallest;
+}
+
+missingNum([8, 2, 3, 9, 4, 7, 5, 0, 6]); // 1
+missingNum([2, 3, 0, 6, 1, 5]); // 4
+
+// Write a function that finds the max profit from an array of stock prices 
+// The time complexity should be O(N)
+function maxProfit(arr) {
+  let profit = 0;
+  
+  for (let i = 0; i < arr.length; i++) {
+    let sell = Math.max(...arr.slice(i+1));
+    let newProfit = sell - arr[i];
+    profit = newProfit > profit ? newProfit : profit;
+  }
+  
+  return profit;
+}
+
+maxProfit([10, 7, 5, 8, 11, 2, 6]); // 6
+
+// Write a function that finds the largest product of 2 numbers in an array
+// that can contain negative and positive numbers. The time complexity should be
+// O(N). Can assume array has at least 2 numbers.
+
+function maxProduct(arr) {
+  let product = arr[0] * arr[1];
+
+  arr.forEach((num, idx, arr) => {
+    let factor = lgestProductFactor(num, idx, arr);
+    let newProduct = factor * num;
+    product = newProduct > product ? newProduct : product;
+  });
+  
+  return product;
+}
+
+function lgestProductFactor(num, idx, arr) {
+  const [min, max] = maxMinNeighbors(arr, idx);
+  return num < 0 ? min : max;
+}
+
+function maxMinNeighbors(arr, idx) {
+  const otherNums = arr.slice(0, idx).concat(arr.slice(idx+1));
+  return [Math.min(...otherNums), Math.max(...otherNums)];
+}
+
+maxProduct(  [5, -10, -6, 9, 4]) === 60;    // true
+maxProduct(  [5, -10, -6, 90, 4]) === 450;  // true
+
+// Write a function that will sort human temperature readings that
+// can range from 97.0 to 99.0 in O(N) time.
+
+function sortHumanTemps(arr) {
+  const temps = countsOfTemps(arr);
+  let sorted = [];
+  
+  [...Array(991).keys()].slice(970).forEach(num => {
+    let float = num / 10;
+    if (temps[float]) {
+      sorted = sorted.concat(Array(temps[float]).fill(float));
+    }
+  });
+
+  return sorted;
+}
+
+function countsOfTemps(temps) {
+  const counts = {};
+  
+  temps.forEach(temp => {
+    if (!counts[temp]) {
+      counts[temp] = 1;
+    } else {
+      counts[temp] += 1;
+    }
+  });
+  
+  return counts;
+}
+
+sortHumanTemps([98.6, 98.0, 97.1, 99.0, 98.9, 97.8, 98.5, 98.2, 98.0, 97.1]);
+// returns: [ 97.1, 97.1, 97.8, 98, 98, 98.2, 98.5, 98.6, 98.9, 99]
+
+// Write a function that will return the length of the longest consecutive
+// sequence of integers from a given array of random integers. The time
+// complexity should be O(N).
+
+
+[10, 5, 12, 3, 55, 30, 4, 11, 2] // 4
+[19, 13, 15, 12, 18, 14, 17, 11] // 5
