@@ -10,12 +10,12 @@ interface TrainingEvaluation {
 
 const numDaysTrained = (hoursPerDayArr: number[]): number => {
   return hoursPerDayArr.filter(hours => hours != 0).length;
-}
+};
 
 const avgHours = (arr: number[]): number => {
   const total = arr.reduce((total, hours) => total + hours, 0);
   return total / arr.length;
-}
+};
 
 class Rating {
   constructor(public success: boolean, public rating: number, public ratingDescription: string) {
@@ -39,23 +39,17 @@ const rateTraining = (target: number, avg: number) => {
   }
 };
 
-const parseInputs = (elements: string[]): number[] => {
-  const anyInvalid = elements.some(num => isNaN(Number(num)));
+const validInputs = (target: string,  stringNums: string[]): number[] => {
+  const nums = [target].concat(stringNums).map(stringNum => Number(stringNum));
+  return nums.includes(NaN) ? [] : nums;
+};
 
-  if (anyInvalid) {
-    throw new Error("Invalid training log entered! Please provide numerical inputs only.");
-  } else {
-    return elements.map(stringNum => Number(stringNum));
-  }
-}
-
-const calcExercises = (nums: number[]): TrainingEvaluation => {
+const calculate = (nums: number[]): TrainingEvaluation => {
   const target = nums[0];
   const hoursPerDay = nums.slice(1);
   const average = avgHours(hoursPerDay);
   const { success, rating, ratingDescription } = rateTraining(target, average);
   
-
   return {
     periodLength: hoursPerDay.length,
     trainingDays: numDaysTrained(hoursPerDay),
@@ -65,19 +59,11 @@ const calcExercises = (nums: number[]): TrainingEvaluation => {
     target,
     average
   };
+};
 
-}
+const exercises = { calculate, validInputs };
 
+export default exercises;
 
-try {
-  const numbers: number[] = parseInputs(process.argv.slice(2));
-  console.log(calcExercises(numbers));
-} catch (error: unknown) {
-  if (error instanceof Error) {
-    console.log(`Error: ${error.message}`);
-  } else {
-    console.log('Something is wrong');
-  } 
-}
 
 

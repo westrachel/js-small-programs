@@ -19,12 +19,15 @@ const calculateBmi = (height: number, weight: number): bmiProfile => {
   }
 
   return { height, weight, bmi };
-}
+};
 
+const prepUrlNums = (queryString: string, heightWeight: string): number => {
+  const wordRegex = new RegExp(`${heightWeight}=[0-9]{1,}`);
+  const numRegex = new RegExp('[0-9]{1,}');
+  const stringNum = String(String(queryString.match(wordRegex)).match(numRegex));
+  return Number(stringNum);
+};
 
-// For processing command line inputs before integrated express:
-//const height: number = Number(process.argv[2]);
-//const weight: number = Number(process.argv[3]);
-//console.log(`BMI calculated for a height of ${height} cm & a weight of ${weight} kg is: ${calculateBmi(height, weight)}`);
+const bmi = { calculateBmi, prepUrlNums };
 
-export default calculateBmi;
+export default bmi;
