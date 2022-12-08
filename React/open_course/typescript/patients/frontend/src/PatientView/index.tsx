@@ -4,8 +4,9 @@ import { Patient } from '../types';
 import FemaleIcon from '@mui/icons-material/Female';
 import MaleIcon from '@mui/icons-material/Male';
 import WcIcon from '@mui/icons-material/Wc';
+import EntryView from './EntryView';
 
-const PatientView= () => {
+const PatientView = () => {
   const { id } = useParams<{ id: string }>();
   const [{ patients }] = useStateValue(); 
 
@@ -29,7 +30,9 @@ const PatientView= () => {
   return (
     <>
       <h2>{patient.name}{genderIcon()}</h2>
-      occupation: {patient.occupation}
+      <p>occupation: {patient.occupation}</p>
+      <h3>Entries:</h3>
+      <EntryView entries={patient.entries} />
     </>
   );
 };
