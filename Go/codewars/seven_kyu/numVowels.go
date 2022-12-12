@@ -2,6 +2,7 @@ package main
 
 import (
 	"fmt"
+	"strings"
 )
 
 // Write a function that accepts a string and returns the numerical
@@ -18,15 +19,10 @@ func main() {
 
 func numVowels(str string) int {
 	count := 0
-	vowels := map[string]bool{
-		"a": true,
-		"e": true,
-		"i": true,
-		"o": true,
-		"u": true,
-	}
+	const Vowels = "AEOIU"
 	for i, _ := range str {
-		if vowels[string(str[i])] {
+		letter := strings.ToUpper(string(str[i]))
+		if strings.Contains(Vowels, letter) {
 			count += 1
 		}
 	}
